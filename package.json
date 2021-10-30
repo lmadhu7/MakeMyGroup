@@ -8,6 +8,7 @@
     "eject": "expo eject"
   },
   "dependencies": {
+    "@digieggs/rn-country-code-picker": "^1.2.0",
     "@react-native-community/masked-view": "0.1.10",
     "@react-navigation/bottom-tabs": "^6.0.8",
     "@react-navigation/native": "6.0.1",
@@ -28,11 +29,13 @@
     "react-native-gesture-handler": "~1.10.2",
     "react-native-gifted-chat": "^0.16.3",
     "react-native-hide-with-keyboard": "1.2.1",
+    "react-native-ionicons": "^4.6.5",
     "react-native-material-textfield": "^0.16.1",
     "react-native-paper": "^4.9.2",
     "react-native-reanimated": "~2.2.0",
     "react-native-safe-area-context": "3.2.0",
     "react-native-screens": "~3.4.0",
+    "react-native-svg": "^12.1.1",
     "react-native-vector-icons": "^8.1.0",
     "react-native-web": "~0.13.12",
     "styled-components": "^5.3.1",
