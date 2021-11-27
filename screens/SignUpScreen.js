@@ -12,7 +12,6 @@ import {
 } from "react-native";
 import { Formik } from "formik";
 import * as yup from "yup";
-import { CallingCodePicker } from "@digieggs/rn-country-code-picker";
 
 const phoneRegExp =
   "/^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/";
@@ -27,12 +26,37 @@ const signUpValidationSchema = yup.object().shape({
     .required("Password is required"),
   name: yup.string().required("Name field is required"),
   phonenumber: yup.string().required("Phone number is required"),
-  // .matches(phoneRegExp, 'Phone number is not valid'),
 });
 
-export default function SignUpScreen({ navigation }) {
-  const [value, setValue] = useState();
-  const [selectedCallingCode, setSelectedCallingCode] = useState("91");
+export default function SignupScreen({ navigation }) {
+  const [name, setName] = React.useState("");
+  const [phoneNumber, setPhoneNumber] = React.useState("");
+  const [email, setEmail] = React.useState("");
+  const [password, setPassword] = React.useState("");
+
+  const signUpButton = () => {
+    const paramBody = {
+      name: name,
+      phone: phoneNumber,
+      email: email,
+      password: password,
+    };
+    axios({
+      url: " http://18.117.122.86:5000/insertsignupdetails",
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
+      },
+      data: paramBody,
+    }).then((res) => {
+      console.log(res.data);
+      if (res.data === "Successful") {
+        navigation.navigate("Login");
+      }
+    });
+  };
 
   return (
     <ScrollView>
@@ -93,12 +117,6 @@ export default function SignUpScreen({ navigation }) {
                   )}
                 </View>
 
-                <CallingCodePicker
-                  style={{ top: 228, position: "absolute" }}
-                  selectedValue={selectedCallingCode}
-                  onValueChange={(value) => setSelectedCallingCode(value)}
-                />
-
                 <Text style={styles.emailText}>Email</Text>
                 <TextInput
                   style={styles.emailPlaceholder}
@@ -157,11 +175,9 @@ export default function SignUpScreen({ navigation }) {
 
 const styles = StyleSheet.create({
   container: {
-    // flex: 1,
-    width: 414,
+    flex: 1,
     height: 896,
     backgroundColor: "#ED722E",
-    // color: '#ED722E',
   },
   welcomeText: {
     position: "absolute",
@@ -183,7 +199,6 @@ const styles = StyleSheet.create({
     lineHeight: 36,
     fontWeight: "600",
     color: "#FFFFFF",
-    // disply:"flex"
   },
   subContainer: {
     top: 185,
@@ -203,10 +218,10 @@ const styles = StyleSheet.create({
     lineHeight: 24,
     fontWeight: "600",
     color: "#000000",
-    // disply:"flex"
   },
   namePlaceholder: {
     position: "absolute",
+    width: 360,
     left: 38,
     top: 118,
     fontStyle: "normal",
@@ -214,12 +229,13 @@ const styles = StyleSheet.create({
     lineHeight: 19,
     fontWeight: "500",
     color: "rgba(0,0,0,0.5)",
-    // disply:"flex"
+    borderBottomWidth: 1,
+    borderBottomColor: "rgba(0, 0, 0, 0.36)",
   },
   errorName: {
     position: "absolute",
     left: 38,
-    top: 140,
+    top: 150,
   },
   phoneNumberText: {
     position: "absolute",
@@ -233,19 +249,22 @@ const styles = StyleSheet.create({
   },
   phonenumberPlaceholder: {
     position: "absolute",
+    flex: 1,
     left: 38,
     top: 228,
+    width: 360,
     fontStyle: "normal",
     fontSize: 14,
-    lineHeight: 19,
+    // lineHeight: 19,
     fontWeight: "500",
     color: "rgba(0,0,0,0.5)",
-    // disply:"flex"
+    borderBottomWidth: 1,
+    borderBottomColor: "rgba(0, 0, 0, 0.36)",
   },
   errorPhonenumber: {
     position: "absolute",
     left: 38,
-    top: 250,
+    top: 260,
   },
   emailText: {
     position: "absolute",
@@ -259,19 +278,21 @@ const styles = StyleSheet.create({
   },
   emailPlaceholder: {
     position: "absolute",
+    width: 360,
     left: 38,
     top: 339,
     fontStyle: "normal",
     fontSize: 14,
-    lineHeight: 19,
+    // lineHeight: 19,
     fontWeight: "500",
     color: "rgba(0,0,0,0.5)",
-    // disply:"flex"
+    borderBottomWidth: 1,
+    borderBottomColor: "rgba(0, 0, 0, 0.36)",
   },
   errorEmail: {
     position: "absolute",
     left: 38,
-    top: 361,
+    top: 371,
   },
   passwordText: {
     position: "absolute",
@@ -285,24 +306,26 @@ const styles = StyleSheet.create({
   },
   passwordPlaceholder: {
     position: "absolute",
+    width: 360,
     left: 38,
     top: 448,
     fontStyle: "normal",
     fontSize: 14,
-    lineHeight: 19,
+    // lineHeight: 19,
     fontWeight: "500",
     color: "rgba(0,0,0,0.5)",
-    // disply:"flex"
+    borderBottomWidth: 1,
+    borderBottomColor: "rgba(0, 0, 0, 0.36)",
   },
   errorPassword: {
-    position: "absolute",
+    // position: "absolute",
     left: 38,
-    top: 470,
+    top: 480,
   },
   signupButton: {
     width: 346,
     left: 38,
-    top: 530,
+    top: 520,
   },
   Button: {
     width: 346,
@@ -318,6 +341,5 @@ const styles = StyleSheet.create({
     lineHeight: 19,
     fontWeight: "600",
     color: "rgba(58,59,61,0.6)",
-    // disply:"flex"
   },
 });

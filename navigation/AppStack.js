@@ -7,6 +7,7 @@ import { Icon } from "react-native-elements/";
 import HomeScreen from "../screens/HomeScreen";
 import GroupScreen from "../screens/GroupScreen";
 import ProfileScreen from "../screens/ProfileScreen";
+import ChatScreen from "../screens/ChatScreen";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -26,6 +27,8 @@ export default function AppStack() {
             iconName = focused ? "groups" : "groups";
           } else if (route.name === "Profile") {
             iconName = focused ? "tv" : "tv";
+          } else if (route.name === "Chat") {
+            iconName = focused ? "chatbox" : "chatbox";
           }
 
           // You can return any component that you like here!
@@ -38,6 +41,7 @@ export default function AppStack() {
       <Tab.Screen name="Home" component={HomeScreen} />
       <Tab.Screen name="My Group" component={GroupScreen} />
       <Tab.Screen name="Profile" component={ProfileScreen} />
+      <Tab.Screen name="chat" component={ChatScreen} />
     </Tab.Navigator>
   );
 }

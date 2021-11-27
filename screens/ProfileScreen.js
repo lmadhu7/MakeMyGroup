@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   StyleSheet,
@@ -9,8 +9,33 @@ import {
 } from "react-native";
 import { Avatar } from "react-native-elements";
 import { Divider } from "react-native-elements";
+import axios from "axios";
 
 export default function ProfileScreen({ navigation }) {
+  const [name, setName] = React.useState("");
+
+  const getProfileDetails = () => {
+    const paramBody = {
+      email: "madhusmile226@gmail.com",
+    };
+    axios({
+      url: "http://3.17.188.126:5000/getProfileDetails",
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
+      },
+      data: paramBody,
+    }).then((res) => {
+      setName(res["data"][0]["member_name"]);
+    });
+  };
+
+  useEffect(() => {
+    getProfileDetails();
+  }, []);
+
   return (
     <View style={styles.container}>
       <Text style={styles.Profile}>Profile</Text>
@@ -32,7 +57,7 @@ export default function ProfileScreen({ navigation }) {
         }}
         activeOpacity={0.7}
       />
-      <Text style={styles.profilename}>Victoria Robertson</Text>
+      <Text style={styles.profilename}>{name}</Text>
 
       <Text style={styles.emailId}>Email ID</Text>
       <Text style={styles.Phnumber}>Phone Number </Text>
@@ -73,7 +98,7 @@ const styles = StyleSheet.create({
   profilename: {
     position: "absolute",
     top: 320,
-    left: 100,
+    left: 160,
     fontStyle: "normal",
     fontSize: 24,
     lineHeight: 29,

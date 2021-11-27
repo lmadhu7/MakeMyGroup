@@ -3,51 +3,65 @@ import {
   View,
   StyleSheet,
   Text,
-  Pressable,
-  Button,
   FlatList,
-  SectionList,
   SafeAreaView,
   StatusBar,
   TouchableOpacity,
+  Pressable,
+  TouchableHighlight,
 } from "react-native";
 import axios from "axios";
 import { Icon } from "react-native-elements";
-import { ScrollView } from "react-native-gesture-handler";
+import { ScrollView } from "react-native-virtualized-view";
 
 export default function HomeScreen({ navigation }) {
   const renderItem = ({ item }) => {
-    const backgroundColor = item === selectedId ? "#000000" : "#FCE4D7";
-    const color = item === selectedId ? "white" : "red";
+    const courseData = {
+      courseName: item["child_category"],
+      mode: item["mode"],
+    };
     return (
       <TouchableOpacity
         onPress={() => {
-          navigation.navigate("Groupdetails", { data: item });
+          navigation.navigate("Groupdetails", { data: courseData });
         }}
         style={styles.item}
       >
-        <Text style={styles.title}>{item}</Text>
+        <Text style={styles.title}>{item["child_category"]}</Text>
       </TouchableOpacity>
     );
   };
 
-  // const Item = ({ item, onPress, backgroundColor, textColor }) => (
-  //     <TouchableOpacity onPress={(item) => {
-  //         if(item){
-  //             navigation.navigate('Groupdetails', {item});
-  //         }
-  //     }} style={[styles.item, backgroundColor]}>
-  //         <Text style={[styles.title, textColor]}>{item}</Text>
-  //     </TouchableOpacity>
-  // );
   const [selectedId, setSelectedId] = useState(null);
   const [enginnering, setEnginnering] = useState(null);
   const [management, setManagement] = useState(null);
   const [medicine, setMedicine] = useState(null);
+  const [categoryData, setCategoryData] = useState(null);
+
+  let enginneringArr = [];
+  let managementArr = [];
+  let medicineArr = [];
+
+  let modeOfDelivery = "Both";
+
+  function BothCourses() {
+    modeOfDelivery = "Both";
+    setVal(modeOfDelivery);
+  }
+
+  function offlineCourses() {
+    modeOfDelivery = "Offline";
+    setVal(modeOfDelivery);
+  }
+
+  function onlineCourses() {
+    modeOfDelivery = "Online";
+    setVal(modeOfDelivery);
+  }
 
   const setValues = () => {
     axios({
-      url: " http://3.17.188.126:5000/categories",
+      url: "http://3.17.188.126:5000/categories",
       method: "GET",
       headers: {
         Accept: "application/json",
@@ -56,12 +70,48 @@ export default function HomeScreen({ navigation }) {
       },
     })
       .then((res) => {
-        setEnginnering(res.data.Enginnering);
-        setManagement(res.data.Management);
-        setMedicine(res.data.Medicine);
+        console.log(res.data);
+        setCategoryData(res.data);
+        for (const cat of res.data) {
+          if (cat["mode"] === modeOfDelivery) {
+            if (
+              cat["parent_category"] == "Enginnering" ||
+              cat["parent_category"] == "Engineering"
+            ) {
+              enginneringArr.push(cat);
+            } else if (cat["parent_category"] == "Management") {
+              managementArr.push(cat);
+            } else if (cat["parent_category"] == "Medicine") {
+              medicineArr.push(cat);
+            }
+          }
+        }
+        setEnginnering(enginneringArr);
+        setManagement(managementArr);
+        setMedicine(medicineArr);
       })
       .catch((e) => console.log(e));
   };
+
+  function setVal(modeOfDelivery) {
+    for (const cat of categoryData) {
+      if (cat["mode"] === modeOfDelivery) {
+        if (
+          cat["parent_category"] == "Enginnering" ||
+          cat["parent_category"] == "Engineering"
+        ) {
+          enginneringArr.push(cat);
+        } else if (cat["parent_category"] == "Management") {
+          managementArr.push(cat);
+        } else if (cat["parent_category"] == "Medicine") {
+          medicineArr.push(cat);
+        }
+      }
+    }
+    setEnginnering(enginneringArr);
+    setManagement(managementArr);
+    setMedicine(medicineArr);
+  }
 
   useEffect(() => {
     setValues();
@@ -69,13 +119,8 @@ export default function HomeScreen({ navigation }) {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar
-        animated={true}
-        backgroundColor="#ED722E"
-        // barStyle={statusBarStyle}
-        // showHideTransition={statusBarTransition}
-        // hidden={hidden}
-      />
+      <StatusBar animated={true} backgroundColor="#ED722E" />
+
       <View style={styles.logoContainer}>
         <TouchableOpacity
           style={styles.icon}
@@ -92,6 +137,7 @@ export default function HomeScreen({ navigation }) {
           </Text>
         </View>
       </View>
+
       <View style={styles.dataView}>
         <Text style={styles.data}>
           Select a course you want to learn we will create or put you in a group
@@ -99,71 +145,123 @@ export default function HomeScreen({ navigation }) {
         </Text>
       </View>
       <Text style={styles.mode}>Mode Of Delivery</Text>
-      <View style={styles.bothView}>
+      <Pressable style={styles.bothView} onPress={BothCourses}>
         <Text style={styles.bothText}>Both</Text>
-      </View>
-      <View style={styles.offlineView}>
+      </Pressable>
+      <Pressable style={styles.offlineView} onPress={offlineCourses}>
         <Text style={styles.offlineText}>Offline</Text>
-      </View>
-      <View style={styles.onlineView}>
+      </Pressable>
+      <Pressable style={styles.onlineView} onPress={onlineCourses}>
         <Text style={styles.onlineText}>Online</Text>
-      </View>
+      </Pressable>
       <View>
         <Text style={styles.engineeringText}>Engineering</Text>
       </View>
+
       <FlatList
-        horizontal
+        style={{ flex: 1 }}
+        numColumns={3}
         style={styles.enggFlatList}
-        showsHorizontalScrollIndicator={false}
         data={enginnering}
-        renderItem={renderItem}
-        keyExtractor={(item) => item}
+        renderItem={({ item, index, separators }) => (
+          <TouchableHighlight
+            key={item.InstituteName}
+            onShowUnderlay={separators.highlight}
+            onHideUnderlay={separators.unhighlight}
+          >
+            <TouchableOpacity
+              onPress={() => {
+                navigation.navigate("Groupdetails", {
+                  data: {
+                    courseName: item["child_category"],
+                    mode: item["mode"],
+                  },
+                });
+              }}
+              style={styles.item}
+            >
+              <Text style={styles.title}>{item["child_category"]}</Text>
+            </TouchableOpacity>
+          </TouchableHighlight>
+        )}
+        keyExtractor={(item) => item["child_category"]}
         extraData={selectedId}
       />
+
       <View>
         <Text style={styles.managementText}>Management</Text>
       </View>
+
       <FlatList
-        horizontal
+        style={{ flex: 1 }}
+        numColumns={3}
         style={styles.manageFlatList}
-        showsHorizontalScrollIndicator={false}
         data={management}
-        renderItem={renderItem}
-        keyExtractor={(item) => item}
+        renderItem={({ item, index, separators }) => (
+          <TouchableHighlight
+            key={item.InstituteName}
+            onShowUnderlay={separators.highlight}
+            onHideUnderlay={separators.unhighlight}
+          >
+            <TouchableOpacity
+              onPress={() => {
+                navigation.navigate("Groupdetails", {
+                  data: {
+                    courseName: item["child_category"],
+                    mode: item["mode"],
+                  },
+                });
+              }}
+              style={styles.item}
+            >
+              <Text style={styles.title}>{item["child_category"]}</Text>
+            </TouchableOpacity>
+          </TouchableHighlight>
+        )}
+        keyExtractor={(item) => item["child_category"]}
         extraData={selectedId}
       />
+
       <View>
         <Text style={styles.medicineText}>Medicine</Text>
       </View>
       <FlatList
-        horizontal
+        style={{ flex: 1 }}
+        numColumns={3}
         style={styles.MedicineFlatList}
-        showsHorizontalScrollIndicator={false}
         data={medicine}
-        renderItem={renderItem}
-        keyExtractor={(item) => item}
+        renderItem={({ item, index, separators }) => (
+          <TouchableHighlight
+            key={item.InstituteName}
+            onShowUnderlay={separators.highlight}
+            onHideUnderlay={separators.unhighlight}
+          >
+            <TouchableOpacity
+              onPress={() => {
+                navigation.navigate("Groupdetails", {
+                  data: {
+                    courseName: item["child_category"],
+                    mode: item["mode"],
+                  },
+                });
+              }}
+              style={styles.item}
+            >
+              <Text style={styles.title}>{item["child_category"]}</Text>
+            </TouchableOpacity>
+          </TouchableHighlight>
+        )}
+        keyExtractor={(item) => item["child_category"]}
         extraData={selectedId}
       />
     </SafeAreaView>
   );
 }
 
-// const enginnering1 = [
-//   "Java",
-//   "Python",
-//   "Data scince",
-//   "C++",
-//   "Java1",
-//   "Python1",
-//   "Data scince1",
-//   "C++1",
-//   "java2",
-// ];
-
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     width: 414,
-    // height: 896
   },
   icon: {
     position: "absolute",
@@ -328,7 +426,7 @@ const styles = StyleSheet.create({
     letterSpacing: -0.02,
   },
   item: {
-    width: 140,
+    width: 100,
     height: 90,
     margin: 10,
     borderRadius: 15,

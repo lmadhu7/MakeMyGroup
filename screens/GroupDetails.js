@@ -3,25 +3,30 @@ import {
   View,
   StyleSheet,
   Text,
-  Image,
   SafeAreaView,
   TouchableOpacity,
   FlatList,
-  Button,
-  StatusBar,
+  Alert,
 } from "react-native";
 import axios from "axios";
-import { IconAntDesign } from "react-native-vector-icons/AntDesign";
-// import { Button } from "react-native-elements/dist/buttons/Button";
+import { Ionicons } from "@expo/vector-icons";
+import { ScrollView } from "react-native-virtualized-view";
 
 export default function GroupDetails({ route, navigation }) {
   const { data } = route.params;
   const [instituteDetails, setInstituteDetails] = useState(null);
+
+  const [selectedId, setSelectedId] = useState(null);
+
   const currentDetails = [];
+  const modeDelivery = [];
+
+  console.log("data");
+  console.log(data);
 
   if (instituteDetails) {
     for (let x of instituteDetails) {
-      if (x["CourseName"].toUpperCase() === data.toUpperCase()) {
+      if (x["CourseName"].toUpperCase() === data["courseName"].toUpperCase()) {
         currentDetails.push(x);
       }
     }
@@ -31,34 +36,6 @@ export default function GroupDetails({ route, navigation }) {
     console.log("currentDetails");
     console.log(currentDetails);
   }
-
-  const renderItem = ({ item, index, separators }) => {
-    const instituteName = item.InstituteName;
-    const count = item.Count;
-    return (
-      <TouchableOpacity style={{ left: 22, top: 100 }}>
-        <View style={{ left: 22, top: 50 }}>
-          <Text>{instituteName}</Text>
-        </View>
-        <View style={{ left: 187, top: 30 }}>
-          <Text>{count}</Text>
-        </View>
-        <View
-          onPress={() => alert("sri")}
-          style={{
-            left: 282,
-            top: 10,
-            height: 21,
-            width: 58,
-            borderRadius: 25,
-            backgroundColor: "#ED722E",
-          }}
-        >
-          <Text style={{ left: 20, position: "absolute" }}>join</Text>
-        </View>
-      </TouchableOpacity>
-    );
-  };
 
   function getInstitutedetails() {
     axios({
@@ -81,47 +58,92 @@ export default function GroupDetails({ route, navigation }) {
   //
 
   return (
-    <SafeAreaView style={{ width: 414, height: 896 }}>
+    <SafeAreaView>
       <View style={styles.container}>
-        {/* <IconAntDesign name="arrowleft" size={16} color="red" /> */}
-        <Text style={styles.GroupName}>Group Name: {data}</Text>
+        <View style={{ top: 43, left: 22 }}>
+          <Ionicons
+            onPress={() => navigation.navigate("Home")}
+            name="arrow-back"
+            size={30}
+            color="#FFFFFF"
+          />
+        </View>
+        <Text style={styles.GroupName}>
+          Group Name: {data["courseName"] + " " + data["mode"]}
+        </Text>
         <Text style={styles.IName}>Institute name </Text>
         <Text style={styles.Discount}>Group formed for Discount </Text>
       </View>
 
       <FlatList
-        // horizontal
-        // style={styles.MedicineFlatList}
-        // showsHorizontalScrollIndicator={false}
+        style={{ top: 70, left: 12, paddingBottom: 50 }}
+        contentContainerStyle={{ paddingBottom: 50 }}
         data={currentDetails}
-        renderItem={renderItem}
-        keyExtractor={(item) => item}
-        // extraData={selectedId}
+        renderItem={({ item, index }) => (
+          <View
+            key={item.InstituteName + item.CourseName}
+            style={{
+              backgroundColor: index % 2 === 0 ? "orange" : "white",
+              flexDirection: "row",
+              justifyContent: "space-evenly",
+              alignItems: "center",
+              paddingVertical: 15,
+            }}
+          >
+            <View style={{ flex: 1, alignItems: "center" }}>
+              <Text>{item.InstituteName}</Text>
+            </View>
+            <View style={{ flex: 1, alignItems: "center" }}>
+              <Text>{item.Count}</Text>
+            </View>
+            <View style={{ flex: 1, alignItems: "center" }}>
+              <TouchableOpacity
+                onPress={() => {
+                  Alert.alert("Successfull joined");
+                  setTimeout(function () {
+                    navigation.navigate("Admin", {
+                      data: {
+                        courseName: data["courseName"],
+                        mode: data["mode"],
+                        instituteName: item.InstituteName,
+                      },
+                    });
+                  }, 300);
+                }}
+                style={{
+                  height: 25,
+                  width: 65,
+                  borderRadius: 25,
+                  backgroundColor: "#ED722E",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <Text style={{ color: "#FFFFFF" }}>join</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        )}
+        keyExtractor={(item) => item.InstituteName}
+        extraData={selectedId}
       />
+      <TouchableOpacity style={{ height: 50, flex: 1, left: 12 }}>
+        <Text>Add institute</Text>
+      </TouchableOpacity>
     </SafeAreaView>
   );
 }
 
-// const currentDetails1 = [
-//   {
-//     InstituteName: "java",
-//     Count: 20,
-//   },
-// ];
-
 const styles = StyleSheet.create({
   container: {
-    // flex: 1,
     width: 414,
-    height: 87,
+    height: 80,
     backgroundColor: "#ED722E",
-    // color: '#ED722E',
   },
   GroupName: {
     position: "absolute",
-    // width: 102,
-    // height: 19,
-    left: 70,
+
+    left: 100,
     top: 47,
     fontStyle: "normal",
     fontWeight: "600",
@@ -135,15 +157,16 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
   },
   IName: {
-    position: "absolute",
+    // position: "absolute",
+    flex: 1,
     width: 120,
-    top: 153,
-    left: 32,
+    top: 70,
+    left: 22,
     fontStyle: "normal",
     fontWeight: "bold",
     fontSize: 15,
-    lineHeight: 17,
-    display: "flex",
+    // lineHeight: 17,
+    // display: "flex",
     alignItems: "flex-end",
     textAlign: "center",
     letterSpacing: -0.02,
@@ -153,36 +176,17 @@ const styles = StyleSheet.create({
   Discount: {
     position: "absolute",
     width: 100,
-    top: 143,
+    top: 90,
     left: 171,
     fontStyle: "normal",
     fontWeight: "bold",
     fontSize: 14,
     lineHeight: 17,
-    display: "flex",
+
     alignItems: "flex-end",
     textAlign: "center",
     letterSpacing: -0.02,
 
     color: "rgba(0,0,0,0.41)",
-  },
-  instituteContainer: {
-    position: "absolute",
-    // width: 370,
-    // height: 50,
-    left: 22,
-    top: 222,
-  },
-  instituteName: {
-    position: "absolute",
-    width: 75,
-    top: 207,
-    // left: 32,
-  },
-  count: {
-    position: "absolute",
-    width: 75,
-    top: 207,
-    // left: 200,
   },
 });

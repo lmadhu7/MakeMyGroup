@@ -13,6 +13,7 @@ import {
 } from "react-native";
 import { Formik } from "formik";
 import * as yup from "yup";
+import { AntDesign } from "@expo/vector-icons";
 
 const LogInValidationSchema = yup.object().shape({
   email: yup
@@ -37,6 +38,9 @@ export default function SignUpScreen({ navigation }) {
           <Text style={styles.welcome}>Welcome</Text>
           <Text style={styles.loginTitle}>Log In</Text>
           <SafeAreaView style={styles.subContainer}>
+            <View style={{ top: 71, left: 100 }}>
+              <AntDesign name="star" size={8} color="red" />
+            </View>
             <Formik
               validationSchema={LogInValidationSchema}
               initialValues={{ email: "", password: "" }}
@@ -53,6 +57,7 @@ export default function SignUpScreen({ navigation }) {
               }) => (
                 <>
                   <Text style={styles.emailText}>Email</Text>
+
                   <TextInput
                     style={styles.emailPlaceholder}
                     placeholder="Example@gmail.com"
@@ -69,6 +74,9 @@ export default function SignUpScreen({ navigation }) {
                     )}
                   </View>
                   <Text style={styles.passwordText}>Password</Text>
+                  <View style={{ top: 152, left: 140 }}>
+                    <AntDesign name="star" size={8} color="red" />
+                  </View>
                   <TextInput
                     style={styles.passwordPlaceholder}
                     placeholder=" Enter Password"
@@ -112,11 +120,10 @@ export default function SignUpScreen({ navigation }) {
 
 const styles = StyleSheet.create({
   container: {
-    // flex: 1,
-    width: 414,
+    // width: 414,
+    flex: 1,
     height: 896,
     backgroundColor: "#ED722E",
-    // color: '#ED722E',
   },
   welcome: {
     position: "absolute",
@@ -155,10 +162,9 @@ const styles = StyleSheet.create({
     lineHeight: 24,
     fontWeight: "600",
     color: "#000000",
-    // disply:"flex"
   },
   emailPlaceholder: {
-    position: "absolute",
+    // position: "absolute",
     left: 38,
     top: 118,
     width: 360,
@@ -167,10 +173,12 @@ const styles = StyleSheet.create({
     lineHeight: 19,
     fontWeight: "500",
     color: "rgba(0,0,0,0.5)",
+    borderBottomWidth: 1,
+    borderBottomColor: "rgba(0, 0, 0, 0.36)",
   },
   errorEmail: {
     position: "absolute",
-    top: 140,
+    top: 160,
     left: 38,
   },
   passwordText: {
@@ -194,7 +202,8 @@ const styles = StyleSheet.create({
     lineHeight: 19,
     fontWeight: "500",
     color: "#000000",
-    // disply:"flex"
+    borderBottomWidth: 1,
+    borderBottomColor: "rgba(0, 0, 0, 0.36)",
   },
   errorPassword: {
     position: "absolute",
@@ -232,7 +241,6 @@ const styles = StyleSheet.create({
     lineHeight: 19,
     fontWeight: "600",
     color: "#FFFFFF",
-    // disply:"flex"
   },
   dontAccout: {
     position: "absolute",
@@ -253,6 +261,5 @@ const styles = StyleSheet.create({
     lineHeight: 22,
     fontWeight: "bold",
     color: "#ED722E",
-    // disply:"flex"
   },
 });

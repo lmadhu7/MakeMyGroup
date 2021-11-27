@@ -7,13 +7,16 @@ import ForgetPasswordScree from "./screens/ForgetPasswordScree";
 import AppStack from "./navigation/AppStack";
 import GroupDetails from "./screens/GroupDetails";
 import NotificationScreen from "./screens/NotificationScreen";
+import ChatScreen from "./screens/ChatScreen";
+import AdminScreen from "./screens/AdminScreen";
+import GroupScreen from "./screens/GroupScreen";
 
 const Stack = createStackNavigator();
 export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator
-        initialRouteName="Login"
+        initialRouteName="Appstack"
         screenOptions={{ headerShown: false }}
       >
         <Stack.Screen name={"Login"} component={LoginScreen} />
@@ -22,6 +25,9 @@ export default function App() {
         <Stack.Screen name={"Appstack"} component={AppStack} />
         <Stack.Screen name={"Groupdetails"} component={GroupDetails} />
         <Stack.Screen name={"Notifications"} component={NotificationScreen} />
+        <Stack.Screen name={"Chat"} component={ChatScreen} />
+        <Stack.Screen name={"Admin"} component={AdminScreen} />
+        <Stack.Screen name={"Group"} component={GroupScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

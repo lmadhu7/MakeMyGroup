@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
-import { View, Text } from 'react-native';
+import React from "react";
+import { View, StyleSheet, Text, Image } from "react-native";
 
-export default function GroupScreen() {
-    return(
-        <View>
-            <Text>Group</Text>
-        </View>
-    )
+export default function ForgetPasswordScreen({ navigation }) {
+  return (
+    <View>
+      <Text>Welcome to ForgetPasswordScreen</Text>
+    </View>
+  );
 }
