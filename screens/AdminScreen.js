@@ -1,13 +1,28 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, SafeAreaView, FlatList } from "react-native";
-import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
+import {
+  View,
+  Text,
+  StyleSheet,
+  SafeAreaView,
+  FlatList,
+  Image,
+  Button,
+} from "react-native";
+import { Video, Audio } from "expo-av";
+import { TouchableOpacity } from "react-native-gesture-handler";
 import axios from "axios";
+import Moment from "react-moment";
+import WebView from "react-native-webview";
+// import PDFView from "react-native-pdf-view";
 
 export default function GroupScreen({ route, navigation }) {
   const { data } = route.params;
-  const [messages, setMessages] = React.useState(null);
-  const [rules, setRules] = React.useState(null);
+  const [currentInstituteDetails, setCurrentInstituteDetails] =
+    React.useState(null);
   const [selectedId, setSelectedId] = useState(null);
+  const video = React.useRef(null);
+  const [status, setStatus] = React.useState({});
+  const [sound, setSound] = React.useState();
 
   const groupName1 =
     data["courseName"] + " " + data["mode"] + " " + data["instituteName"];
@@ -33,14 +48,13 @@ export default function GroupScreen({ route, navigation }) {
     }).then((res) => {
       let rulesArr = [];
       let messageArr = [];
+      let currentDetailsArr = [];
       for (const group of res.data) {
-        if (group["group_name"].toUpperCase() === groupName1.toUpperCase()) {
-          rulesArr.push(group["rules"]);
-          messageArr.push(group["messages"]);
-        }
+        // if (group["group_name"].toUpperCase() === groupName1.toUpperCase()) {
+        currentDetailsArr.push(group);
+        // }
       }
-      setRules(rulesArr);
-      setMessages(messageArr);
+      setCurrentInstituteDetails(currentDetailsArr);
     });
   };
 
@@ -56,28 +70,136 @@ export default function GroupScreen({ route, navigation }) {
       <View style={styles.container}>
         <Text style={styles.AdminText}>Admin Messages</Text>
       </View>
+
       <FlatList
         style={{ top: 200, left: 15 }}
-        data={rules}
-        renderItem={({ item }) => (
-          <TouchableOpacity>
-            <Text>{item}</Text>
-          </TouchableOpacity>
-        )}
-        keyExtractor={(item, index) => item}
+        data={currentInstituteDetails}
+        renderItem={({ item }) => {
+          if (item.messagetype === "Rules") {
+            return (
+              <View>
+                <Moment parse="YYYY-DD-MM HH:mm:ss">{item.timestamp}</Moment>
+
+                <Text
+                  style={{
+                    flex: 1,
+                    backgroundColor: "red",
+                    borderTopLeftRadius: 18,
+                    borderTopRightRadius: 18,
+                    borderBottomRightRadius: 18,
+                    borderBottomLeftRadius: 4,
+                  }}
+                >
+                  {item.message}
+                </Text>
+                <Text> </Text>
+              </View>
+            );
+          } else if (item.messagetype === "image") {
+            return (
+              <View>
+                <Moment parse="YYYY-DD-MM HH:mm:ss">{item.timestamp}</Moment>
+                <Image
+                  style={{ width: 100, height: 100 }}
+                  source={{ uri: item.message }}
+                />
+                <Text> </Text>
+              </View>
+            );
+          } else if (item.messagetype === "message") {
+            return (
+              <View>
+                <Moment parse="YYYY-DD-MM HH:mm:ss">{item.timestamp}</Moment>
+                <Text>{item.message}</Text>
+                <Text> </Text>
+              </View>
+            );
+          } else if (item.messagetype === "video") {
+            return (
+              <View>
+                <Video
+                  ref={video}
+                  style={{ width: 200, height: 200 }}
+                  source={{ uri: item.message }}
+                  useNativeControls
+                  resizeMode="contain"
+                  isLooping
+                  onPlaybackStatusUpdate={(status) => setStatus(() => status)}
+                />
+                <Moment parse="YYYY-DD-MM HH:mm:ss">{item.timestamp}</Moment>
+                <Text>{item.message}</Text>
+                <Text> </Text>
+
+                {/* <View>
+                  <Button
+                    title={status ? "Pause" : "Play"}
+                    onPress={() =>
+                      status
+                        ? video.current.pauseAsync()
+                        : video.current.playAsync()
+                    }
+                  />
+                </View> */}
+              </View>
+            );
+          } else if (item.messagetype === "audio") {
+            return (
+              <View>
+                <Moment parse="YYYY-DD-MM HH:mm:ss">{item.timestamp}</Moment>
+                {/* <Button
+                  title="Play Sound"
+                  onPress={async () => {
+                    console.log("Loading Sound");
+                    console.log(item);
+                    const { sound } = await Audio.sound.createAsync(
+                      // require("../assets/sample.mp3")
+                      require("./" + item.message)
+                    );
+                    setSound(sound);
+
+                    console.log("Playing Sound");
+                    await sound.playAsync();
+                  }}
+                /> */}
+                <Text>{item.message}</Text>
+                {/* <Text> </Text> */}
+              </View>
+            );
+          } else if (item.messagetype === "document") {
+            // let urlDoc = item.message;
+
+            // let absolutePath = RNFS.item.message + "/My.pdf";
+            // let absolutePath = item.message;
+
+            // return (
+            //   <PDFView
+            //     ref={(pdf) => {
+            //       this.pdfView = pdf;
+            //     }}
+            //     src={absolutePath}
+            //     style={ActharStyles.fullCover}
+            //   />
+            // );
+
+            return (
+              <View>
+                <Moment parse="YYYY-DD-MM HH:mm:ss">{item.timestamp}</Moment>
+                {/* <Text>pdf starting</Text>
+                <WebView
+                  source={{
+                    baseUrl: urlDoc,
+                  }}
+                />
+                <Text>pdf end</Text> */}
+              </View>
+            );
+          } else {
+          }
+        }}
+        keyExtractor={(item, index) => item.message}
         extraData={selectedId}
       />
-      <FlatList
-        style={{ top: 300, left: 30, borderRadius: 18, padding: 10 }}
-        data={messages}
-        renderItem={({ item }) => (
-          <TouchableOpacity>
-            <Text>{item}</Text>
-          </TouchableOpacity>
-        )}
-        keyExtractor={(item, index) => item}
-        extraData={selectedId}
-      />
+
       <View style={styles.ChatWithAdmin}>
         <Text
           style={styles.ChatText}
@@ -137,7 +259,7 @@ const styles = StyleSheet.create({
   ChatWithAdmin: {
     position: "absolute",
     width: 390,
-    top: 700,
+    top: 650,
     height: 50,
     backgroundColor: "#FCE4D7",
     borderWidth: 1,
