@@ -157,106 +157,91 @@ export default function HomeScreen({ navigation }) {
       <View>
         <Text style={styles.engineeringText}>Engineering</Text>
       </View>
-      <ScrollView>
-        <FlatList
-          style={{ flex: 1 }}
-          numColumns={3}
-          style={styles.enggFlatList}
-          data={enginnering}
-          renderItem={({ item, index, separators }) => (
-            <TouchableHighlight
-              key={item.InstituteName}
-              onShowUnderlay={separators.highlight}
-              onHideUnderlay={separators.unhighlight}
-            >
-              <TouchableOpacity
-                onPress={() => {
-                  navigation.navigate("Groupdetails", {
-                    data: {
-                      courseName: item["child_category"],
-                      mode: item["mode"],
-                    },
-                  });
-                }}
-                style={styles.item}
-              >
-                <Text style={styles.title}>{item["child_category"]}</Text>
-              </TouchableOpacity>
-            </TouchableHighlight>
-          )}
-          keyExtractor={(item) => item["child_category"]}
-          extraData={selectedId}
-        />
-      </ScrollView>
-      <ScrollView>
-        <View>
-          <Text style={styles.managementText}>Management</Text>
-        </View>
 
-        <FlatList
-          style={{ flex: 1 }}
-          numColumns={3}
-          style={styles.manageFlatList}
-          data={management}
-          renderItem={({ item, index, separators }) => (
-            <TouchableHighlight
-              key={item.InstituteName}
-              onShowUnderlay={separators.highlight}
-              onHideUnderlay={separators.unhighlight}
+      <FlatList
+        style={{ flex: 1 }}
+        numColumns={3}
+        style={styles.enggFlatList}
+        data={enginnering}
+        renderItem={({ item, index, separators }) => (
+          <TouchableHighlight key={item.InstituteName}>
+            <TouchableOpacity
+              onPress={() => {
+                navigation.navigate("Groupdetails", {
+                  data: {
+                    courseName: item["child_category"],
+                    mode: item["mode"],
+                  },
+                });
+              }}
+              style={styles.item}
             >
-              <TouchableOpacity
-                onPress={() => {
-                  navigation.navigate("Groupdetails", {
-                    data: {
-                      courseName: item["child_category"],
-                      mode: item["mode"],
-                    },
-                  });
-                }}
-                style={styles.item}
-              >
-                <Text style={styles.title}>{item["child_category"]}</Text>
-              </TouchableOpacity>
-            </TouchableHighlight>
-          )}
-          keyExtractor={(item) => item["child_category"]}
-          extraData={selectedId}
-        />
-      </ScrollView>
-      <ScrollView>
-        <View>
-          <Text style={styles.medicineText}>Medicine</Text>
-        </View>
-        <FlatList
-          style={{ flex: 1 }}
-          numColumns={3}
-          style={styles.MedicineFlatList}
-          data={medicine}
-          renderItem={({ item, index, separators }) => (
-            <TouchableHighlight
-              key={item.InstituteName}
-              onShowUnderlay={separators.highlight}
-              onHideUnderlay={separators.unhighlight}
+              <Text style={styles.title}>{item["child_category"]}</Text>
+            </TouchableOpacity>
+          </TouchableHighlight>
+        )}
+        keyExtractor={(item) => item["child_category"]}
+        extraData={selectedId}
+      />
+
+      <View>
+        <Text style={styles.managementText}>Management</Text>
+      </View>
+
+      <FlatList
+        style={{ flex: 1 }}
+        numColumns={3}
+        style={styles.manageFlatList}
+        data={management}
+        renderItem={({ item, index, separators }) => (
+          <TouchableHighlight key={item.InstituteName}>
+            <TouchableOpacity
+              onPress={() => {
+                navigation.navigate("Groupdetails", {
+                  data: {
+                    courseName: item["child_category"],
+                    mode: item["mode"],
+                  },
+                });
+              }}
+              style={styles.item}
             >
-              <TouchableOpacity
-                onPress={() => {
-                  navigation.navigate("Groupdetails", {
-                    data: {
-                      courseName: item["child_category"],
-                      mode: item["mode"],
-                    },
-                  });
-                }}
-                style={styles.item}
-              >
-                <Text style={styles.title}>{item["child_category"]}</Text>
-              </TouchableOpacity>
-            </TouchableHighlight>
-          )}
-          keyExtractor={(item) => item["child_category"]}
-          extraData={selectedId}
-        />
-      </ScrollView>
+              <Text style={styles.title}>{item["child_category"]}</Text>
+            </TouchableOpacity>
+          </TouchableHighlight>
+        )}
+        keyExtractor={(item) => item["child_category"]}
+        extraData={selectedId}
+      />
+
+      <View>
+        <Text style={styles.medicineText}>Medicine</Text>
+      </View>
+      <FlatList
+        style={{ flex: 1 }}
+        numColumns={3}
+        style={styles.MedicineFlatList}
+        data={medicine}
+        renderItem={({ item, index, separators }) => (
+          <TouchableHighlight key={item.InstituteName}>
+            <TouchableOpacity
+              onPress={() => {
+                navigation.navigate("Groupdetails", {
+                  data: {
+                    courseName: item["child_category"],
+                    mode: item["mode"],
+                  },
+                });
+              }}
+              style={styles.item}
+            >
+              <Text style={styles.title}>{item["child_category"]}</Text>
+            </TouchableOpacity>
+          </TouchableHighlight>
+        )}
+        keyExtractor={(item) => item["child_category"]}
+        extraData={selectedId}
+      />
     </SafeAreaView>
   );
 }

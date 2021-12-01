@@ -6,12 +6,12 @@ import {
   SafeAreaView,
   FlatList,
   Image,
-  Button,
 } from "react-native";
 import { Video, Audio } from "expo-av";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import axios from "axios";
 import Moment from "react-moment";
+import moment from "moment";
 import WebView from "react-native-webview";
 // import PDFView from "react-native-pdf-view";
 
@@ -46,8 +46,6 @@ export default function GroupScreen({ route, navigation }) {
         "Content-Type": "application/json",
       },
     }).then((res) => {
-      let rulesArr = [];
-      let messageArr = [];
       let currentDetailsArr = [];
       for (const group of res.data) {
         // if (group["group_name"].toUpperCase() === groupName1.toUpperCase()) {
@@ -63,7 +61,7 @@ export default function GroupScreen({ route, navigation }) {
   }, []);
 
   return (
-    <SafeAreaView>
+    <SafeAreaView style={{ backgroundColor: "white" }}>
       <View style={styles.groupNmae1}>
         <Text style={styles.groupNmae1Text}>{groupName1}</Text>
       </View>
@@ -76,31 +74,45 @@ export default function GroupScreen({ route, navigation }) {
         data={currentInstituteDetails}
         renderItem={({ item }) => {
           if (item.messagetype === "Rules") {
+            let date = item.timestamp.split(" ")[0];
+            // let time = item.timestamp.split(" ")[1];
             return (
               <View>
-                <Moment parse="YYYY-DD-MM HH:mm:ss">{item.timestamp}</Moment>
+                {/* <Moment format="YYYY/DD/MM">{date}</Moment> */}
+                <View style={{ height: 55 }}>
+                  <Text style={{ fontSize: 20, textAlign: "center" }}>
+                    {date}
+                  </Text>
+                </View>
+                <>
+                  <View
+                    style={{
+                      width: 400,
+                      backgroundColor: "rgba(0,0,0,0.4)",
+                      height: 25,
+                      borderRadius: 5,
+                    }}
+                  >
+                    <Text
+                      style={{
+                        fontSize: 16,
 
-                <Text
-                  style={{
-                    flex: 1,
-                    backgroundColor: "red",
-                    borderTopLeftRadius: 18,
-                    borderTopRightRadius: 18,
-                    borderBottomRightRadius: 18,
-                    borderBottomLeftRadius: 4,
-                  }}
-                >
-                  {item.message}
-                </Text>
-                <Text> </Text>
+                        lineHeight: 18,
+                        textAlign: "center",
+                      }}
+                    >
+                      {item.message}
+                    </Text>
+                  </View>
+                </>
               </View>
             );
           } else if (item.messagetype === "image") {
             return (
               <View>
-                <Moment parse="YYYY-DD-MM HH:mm:ss">{item.timestamp}</Moment>
+                {/* <Moment parse="YYYY-DD-MM HH:mm:ss">{item.timestamp}</Moment> */}
                 <Image
-                  style={{ width: 100, height: 100 }}
+                  style={{ width: 100, height: 100, borderWidth: 1 }}
                   source={{ uri: item.message }}
                 />
                 <Text> </Text>
@@ -108,9 +120,24 @@ export default function GroupScreen({ route, navigation }) {
             );
           } else if (item.messagetype === "message") {
             return (
-              <View>
-                <Moment parse="YYYY-DD-MM HH:mm:ss">{item.timestamp}</Moment>
-                <Text>{item.message}</Text>
+              <View
+                style={{
+                  width: 400,
+                  backgroundColor: "rgba(0,0,0,0.2)",
+                  height: 25,
+                  borderRadius: 5,
+                }}
+              >
+                {/* <Moment parse="YYYY-DD-MM HH:mm:ss">{item.timestamp}</Moment> */}
+                <Text
+                  style={{
+                    fontSize: 16,
+                    lineHeight: 18,
+                    textAlign: "center",
+                  }}
+                >
+                  {item.message}
+                </Text>
                 <Text> </Text>
               </View>
             );
@@ -126,7 +153,7 @@ export default function GroupScreen({ route, navigation }) {
                   isLooping
                   onPlaybackStatusUpdate={(status) => setStatus(() => status)}
                 />
-                <Moment parse="YYYY-DD-MM HH:mm:ss">{item.timestamp}</Moment>
+                {/* <Moment parse="YYYY-DD-MM HH:mm:ss">{item.timestamp}</Moment> */}
                 <Text>{item.message}</Text>
                 <Text> </Text>
 
@@ -145,7 +172,8 @@ export default function GroupScreen({ route, navigation }) {
           } else if (item.messagetype === "audio") {
             return (
               <View>
-                <Moment parse="YYYY-DD-MM HH:mm:ss">{item.timestamp}</Moment>
+                {/* Date:<Moment format="DD/MM/YYYY">{item.timestamp}</Moment> */}
+
                 {/* <Button
                   title="Play Sound"
                   onPress={async () => {
@@ -166,31 +194,11 @@ export default function GroupScreen({ route, navigation }) {
               </View>
             );
           } else if (item.messagetype === "document") {
-            // let urlDoc = item.message;
-
-            // let absolutePath = RNFS.item.message + "/My.pdf";
-            // let absolutePath = item.message;
-
-            // return (
-            //   <PDFView
-            //     ref={(pdf) => {
-            //       this.pdfView = pdf;
-            //     }}
-            //     src={absolutePath}
-            //     style={ActharStyles.fullCover}
-            //   />
-            // );
-
             return (
               <View>
-                <Moment parse="YYYY-DD-MM HH:mm:ss">{item.timestamp}</Moment>
-                {/* <Text>pdf starting</Text>
-                <WebView
-                  source={{
-                    baseUrl: urlDoc,
-                  }}
-                />
-                <Text>pdf end</Text> */}
+                {/* <Moment parse="YYYY-DD-MM HH:mm:ss">{item.timestamp}</Moment> */}
+
+                <WebView source={item.message} />
               </View>
             );
           } else {
@@ -257,9 +265,9 @@ const styles = StyleSheet.create({
     letterSpacing: -0.02,
   },
   ChatWithAdmin: {
-    position: "absolute",
+    position: "relative",
     width: 390,
-    top: 650,
+    top: 800,
     height: 50,
     backgroundColor: "#FCE4D7",
     borderWidth: 1,
