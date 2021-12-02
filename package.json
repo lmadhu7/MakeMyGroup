@@ -39,6 +39,7 @@
     "react-native-modal": "^13.0.0",
     "react-native-paper": "^4.9.2",
     "react-native-pdf": "^6.4.0",
+    "react-native-phone-number-input": "^2.1.0",
     "react-native-safe-area-context": "3.2.0",
     "react-native-screens": "~3.4.0",
     "react-native-share": "^7.2.1",

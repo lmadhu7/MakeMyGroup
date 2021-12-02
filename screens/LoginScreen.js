@@ -101,6 +101,12 @@ export default function SignUpScreen({ navigation }) {
                       disabled={!isValid}
                     />
                   </View>
+                  <Text
+                    style={styles.skipText}
+                    onPress={() => navigation.navigate("Appstack")}
+                  >
+                    Skip for now
+                  </Text>
                   <Text style={styles.dontAccout}>Don't have an account?</Text>
                   <Text
                     style={styles.signupText}
@@ -260,6 +266,18 @@ const styles = StyleSheet.create({
     fontSize: 18,
     lineHeight: 22,
     fontWeight: "bold",
+    color: "#ED722E",
+  },
+  skipText: {
+    left: "35%",
+
+    position: "absolute",
+    top: 474,
+    fontStyle: "normal",
+    fontSize: 18,
+    lineHeight: 19,
+    fontWeight: "600",
+    // color: "rgba(58,59,61,0.6)",
     color: "#ED722E",
   },
 });

@@ -4,14 +4,17 @@ import {
   Text,
   SafeAreaView,
   TextInput,
-  Pressable,
   Button,
   StyleSheet,
   ScrollView,
-  KeyboardAvoidingView,
+  Alert,
+  CheckBox,
 } from "react-native";
 import { Formik } from "formik";
+import axios from "axios";
 import * as yup from "yup";
+import { AntDesign } from "@expo/vector-icons";
+import PhoneInput from "react-native-phone-number-input";
 
 const phoneRegExp =
   "/^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/";
@@ -33,8 +36,9 @@ export default function SignupScreen({ navigation }) {
   const [phoneNumber, setPhoneNumber] = React.useState("");
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
+  const [isSelected, setSelection] = useState(false);
 
-  const signUpButton = () => {
+  const userSignUp = () => {
     const paramBody = {
       name: name,
       phone: phoneNumber,
@@ -42,7 +46,7 @@ export default function SignupScreen({ navigation }) {
       password: password,
     };
     axios({
-      url: " http://18.117.122.86:5000/insertsignupdetails",
+      url: "http://3.17.188.126:5000/insertsignupdetails",
       method: "POST",
       headers: {
         Accept: "application/json",
@@ -51,8 +55,10 @@ export default function SignupScreen({ navigation }) {
       },
       data: paramBody,
     }).then((res) => {
-      console.log(res.data);
       if (res.data === "Successful") {
+        Alert.alert(
+          "Thank you for sign up. You may login now using with your registed with mobile number/email id."
+        );
         navigation.navigate("Login");
       }
     });
@@ -72,7 +78,7 @@ export default function SignupScreen({ navigation }) {
               name: "",
               phonenumber: "",
             }}
-            onSubmit={() => navigation.navigate("Login")}
+            onSubmit={userSignUp}
           >
             {({
               handleChange,
@@ -100,6 +106,9 @@ export default function SignupScreen({ navigation }) {
                     </Text>
                   )}
                 </View>
+                <View style={{ top: 70, left: 110 }}>
+                  <AntDesign name="star" size={8} color="red" />
+                </View>
                 <Text style={styles.phoneNumberText}>Phone Number</Text>
                 <TextInput
                   style={styles.phonenumberPlaceholder}
@@ -115,6 +124,9 @@ export default function SignupScreen({ navigation }) {
                       {errors.phonenumber}
                     </Text>
                   )}
+                </View>
+                <View style={{ top: 170, left: 190 }}>
+                  <AntDesign name="star" size={8} color="red" />
                 </View>
 
                 <Text style={styles.emailText}>Email</Text>
@@ -133,6 +145,9 @@ export default function SignupScreen({ navigation }) {
                     </Text>
                   )}
                 </View>
+                <View style={{ top: 270, left: 100 }}>
+                  <AntDesign name="star" size={8} color="red" />
+                </View>
                 <Text style={styles.passwordText}>Password</Text>
                 <TextInput
                   style={styles.passwordPlaceholder}
@@ -150,6 +165,18 @@ export default function SignupScreen({ navigation }) {
                     </Text>
                   )}
                 </View>
+                <View style={{ top: 370, left: 140 }}>
+                  <AntDesign name="star" size={8} color="red" />
+                </View>
+                <View style={styles.checkboxContainer}>
+                  <CheckBox
+                    value={isSelected}
+                    onValueChange={setSelection}
+                    style={styles.checkbox}
+                  />
+                  <Text style={styles.label}>Terms & Conditions?</Text>
+                </View>
+
                 <View style={styles.signupButton}>
                   <Button
                     onPress={handleSubmit}
@@ -158,12 +185,6 @@ export default function SignupScreen({ navigation }) {
                     disabled={!isValid}
                   />
                 </View>
-                <Text
-                  style={styles.skipText}
-                  onPress={() => navigation.navigate("Appstack")}
-                >
-                  Skip for now
-                </Text>
               </>
             )}
           </Formik>
@@ -325,21 +346,24 @@ const styles = StyleSheet.create({
   signupButton: {
     width: 346,
     left: 38,
-    top: 520,
+    top: 460,
   },
   Button: {
     width: 346,
     height: 50,
     backgroundColor: "#ED722E",
   },
-  skipText: {
-    left: 160,
-    position: "absolute",
-    top: 580,
-    fontStyle: "normal",
+  checkboxContainer: {
+    flexDirection: "row",
+    marginBottom: 20,
+    top: 450,
+    left: "30%",
+  },
+  checkbox: {
+    alignSelf: "center",
+  },
+  label: {
+    margin: 8,
     fontSize: 16,
-    lineHeight: 19,
-    fontWeight: "600",
-    color: "rgba(58,59,61,0.6)",
   },
 });
